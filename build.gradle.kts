@@ -14,8 +14,8 @@ repositories {
 }
 
 dependencies {
-    implementation("net.java.dev.jna:jna:5.11.0")
-    implementation("net.java.dev.jna:jna-platform:5.11.0")
+    compileOnly("net.java.dev.jna:jna:5.11.0")
+    compileOnly("net.java.dev.jna:jna-platform:5.11.0")
 
     compileOnly("org.robolectric:android-all:12.1-robolectric-8229987")
     compileOnly("com.github.Anuken.Arc:arc-core:v135.2")
@@ -37,9 +37,9 @@ dependencies {
     testAnnotationProcessor("org.projectlombok:lombok:1.18.24")
 }
 
-group = "dnsjava"
+group = "com.github.Phinner"
 version = "3.6.0-SNAPSHOT"
-description = "dnsjava"
+description = "Stripped down version of dnsjava for Mindustry"
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 publishing {
