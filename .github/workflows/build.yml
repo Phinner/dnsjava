@@ -38,7 +38,3 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           arguments: build
-
-      - name: Run codecovc
-        if: "${{ matrix.arch == 'x64' && matrix.os == 'ubuntu-20.04' && matrix.java == '11' }}"
-        uses: codecov/codecov-action@v2
