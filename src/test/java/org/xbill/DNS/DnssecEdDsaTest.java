@@ -113,36 +113,6 @@ class DnssecEdDsaTest {
   }
 
   @Test
-  void testEdDSA25519_verify() throws IOException, DNSSEC.DNSSECException {
-    DNSKEYRecord dnskey =
-        (DNSKEYRecord)
-            Record.fromString(
-                exampleCom,
-                Type.DNSKEY,
-                DClass.IN,
-                3600,
-                "257 3 15 l02Woi0iS8Aa25FQkUd9RMzZHJpBoRQwAQEX1SxZJA4=",
-                Name.root);
-
-    try (Master m =
-        new Master(
-            new ByteArrayInputStream(
-                ("example.com. 3600 IN MX 10 mail.example.com.\n"
-                        + "example.com. 3600 IN RRSIG MX 15 2 3600 (\n"
-                        + "             1440021600 1438207200 3613 example.com. (\n"
-                        + "             oL9krJun7xfBOIWcGHi7mag5/hdZrKWw15jPGrHpjQeRAvTdszaPD+QLs3f\n"
-                        + "             x8A4M3e23mRZ9VrbpMngwcrqNAg== )")
-                    .getBytes(StandardCharsets.US_ASCII)))) {
-      RRset set = new RRset();
-      Record r;
-      while ((r = m.nextRecord()) != null) {
-        set.addRR(r);
-      }
-      DNSSEC.verify(set, set.sigs().get(0), dnskey, Instant.parse("2015-08-19T22:00:00Z"));
-    }
-  }
-
-  @Test
   void testEdDSA25519_sign() throws Exception {
     KeyFactory keyFactory = KeyFactory.getInstance("EdDSA");
     byte[] privateRaw = Base64.getDecoder().decode("ODIyNjAzODQ2MjgwODAxMjI2NDUxOTAyMDQxNDIyNjI=");

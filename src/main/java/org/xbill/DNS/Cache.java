@@ -181,17 +181,6 @@ public class Cache {
     this(DClass.IN);
   }
 
-  /** Creates a Cache which initially contains all records in the specified file. */
-  public Cache(String file) throws IOException {
-    data = new CacheMap(defaultMaxEntries);
-    try (Master m = new Master(file)) {
-      Record record;
-      while ((record = m.nextRecord()) != null) {
-        addRecord(record, Credibility.HINT);
-      }
-    }
-  }
-
   private synchronized Object exactName(Name name) {
     return data.get(name);
   }

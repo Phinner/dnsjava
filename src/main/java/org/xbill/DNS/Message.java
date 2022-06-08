@@ -87,16 +87,6 @@ public class Message implements Cloneable {
     return m;
   }
 
-  /**
-   * Creates a new Message to contain a dynamic update. A random Message ID and the zone are filled
-   * in.
-   *
-   * @param zone The zone to be updated
-   */
-  public static Message newUpdate(Name zone) {
-    return new Update(zone);
-  }
-
   Message(DNSInput in) throws IOException {
     this(new Header(in));
     boolean isUpdate = header.getOpcode() == Opcode.UPDATE;

@@ -7,11 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The Response from a query to {@link Cache#lookupRecords(Name, int, int)} or {@link
- * Zone#findRecords(Name, int)}.
+ * The Response from a query to {@link Cache#lookupRecords(Name, int, int)}.
  *
  * @see Cache
- * @see Zone
  * @author Brian Wellington
  */
 public class SetResponse {

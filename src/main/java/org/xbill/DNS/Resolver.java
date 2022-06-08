@@ -174,10 +174,6 @@ public interface Resolver {
   /**
    * Asynchronously sends a message using the default {@link ForkJoinPool#commonPool()}.
    *
-   * <p>The default implementation calls the deprecated {@link #sendAsync(Message,
-   * ResolverListener)}. Implementors must override at least one of the {@code sendAsync} methods or
-   * a stack overflow will occur.
-   *
    * @param query The query to send.
    * @return A future that completes when the query is finished.
    */
@@ -188,66 +184,9 @@ public interface Resolver {
   /**
    * Asynchronously sends a message.
    *
-   * <p>The default implementation calls the deprecated {@link #sendAsync(Message,
-   * ResolverListener)}. Implementors must override at least one of the {@code sendAsync} methods or
-   * a stack overflow will occur.
-   *
    * @param query The query to send.
    * @param executor The service to use for async operations.
    * @return A future that completes when the query is finished.
    */
-  @SuppressWarnings("deprecation")
-  default CompletionStage<Message> sendAsync(Message query, Executor executor) {
-    CompletableFuture<Message> f = new CompletableFuture<>();
-    sendAsync(
-        query,
-        new ResolverListener() {
-          @Override
-          public void receiveMessage(Object id, Message m) {
-            f.complete(m);
-          }
-
-          @Override
-          public void handleException(Object id, Exception e) {
-            f.completeExceptionally(e);
-          }
-        });
-    return f;
-  }
-
-  /**
-   * Asynchronously sends a message registering a listener to receive a callback on success or
-   * exception. Multiple asynchronous lookups can be performed in parallel. The callback may be
-   * invoked from any thread.
-   *
-   * <p>The default implementation calls {@link #sendAsync(Message)}. Implementors must override at
-   * least one of the {@code sendAsync} methods or a stack overflow will occur.
-   *
-   * @param query The query to send
-   * @param listener The object containing the callbacks.
-   * @return An identifier, which is also a parameter in the callback
-   * @deprecated Use {@link #sendAsync(Message)}
-   */
-  @Deprecated
-  default Object sendAsync(Message query, ResolverListener listener) {
-    final Object id = new Object();
-    CompletionStage<Message> f = sendAsync(query);
-    f.handleAsync(
-        (result, throwable) -> {
-          if (throwable != null) {
-            Exception exception;
-            if (throwable instanceof Exception) {
-              exception = (Exception) throwable;
-            } else {
-              exception = new Exception(throwable);
-            }
-            listener.handleException(id, exception);
-            return null;
-          }
-
-          listener.receiveMessage(id, result);
-          return null;
-        });
-    return id;
-  }
+  CompletionStage<Message> sendAsync(Message query, Executor executor);
 }
