@@ -22,13 +22,13 @@
 
 package org.xbill.DNS;
 
+import arc.util.*;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * An incoming DNS Zone Transfer. To use this class, first initialize an object, then call the run()
@@ -37,7 +37,6 @@ import lombok.extern.slf4j.Slf4j;
  *
  * @author Brian Wellington
  */
-@Slf4j
 public class ZoneTransferIn {
 
   private static final int INITIALSOA = 0;
@@ -361,7 +360,7 @@ public class ZoneTransferIn {
   }
 
   private void logxfr(String s) {
-    log.debug("{}: {}", zname, s);
+    Log.debug("[DNS] @: @", zname, s);
   }
 
   private void fail(String s) throws ZoneTransferException {

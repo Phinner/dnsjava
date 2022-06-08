@@ -11,6 +11,7 @@ import static org.xbill.DNS.config.IPHlpAPI.IP_ADAPTER_ADDRESSES_LH;
 import static org.xbill.DNS.config.IPHlpAPI.IP_ADAPTER_DNS_SERVER_ADDRESS_XP;
 import static org.xbill.DNS.config.IPHlpAPI.IP_ADAPTER_DNS_SUFFIX;
 
+import arc.util.*;
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Win32Exception;
@@ -21,7 +22,6 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.List;
-import lombok.extern.slf4j.Slf4j;
 import org.xbill.DNS.Name;
 import org.xbill.DNS.SimpleResolver;
 
@@ -32,7 +32,6 @@ import org.xbill.DNS.SimpleResolver;
  * This class requires the <a href="https://github.com/java-native-access/jna">JNA library</a> on
  * the classpath.
  */
-@Slf4j
 public class WindowsResolverConfigProvider implements ResolverConfigProvider {
   private InnerWindowsResolverConfigProvider inner;
 
@@ -41,16 +40,15 @@ public class WindowsResolverConfigProvider implements ResolverConfigProvider {
       try {
         inner = new InnerWindowsResolverConfigProvider();
       } catch (NoClassDefFoundError e) {
-        log.debug("JNA not available");
+        Log.debug("[DNS] JNA not available");
       }
     }
   }
 
-  @Slf4j
   private static final class InnerWindowsResolverConfigProvider extends BaseResolverConfigProvider {
     static {
-      log.debug(
-          "Checking for JNA classes: {} and {}",
+      Log.debug(
+          "[DNS] Checking for JNA classes: @ and @",
           Memory.class.getName(),
           Win32Exception.class.getName());
     }
@@ -88,13 +86,13 @@ public class WindowsResolverConfigProvider implements ResolverConfigProvider {
               if (address instanceof Inet4Address || !address.isSiteLocalAddress()) {
                 addNameserver(new InetSocketAddress(address, SimpleResolver.DEFAULT_PORT));
               } else {
-                log.debug(
-                    "Skipped site-local IPv6 server address {} on adapter index {}",
+                Log.debug(
+                    "[DNS] Skipped site-local IPv6 server address @ on adapter index @",
                     address,
                     result.IfIndex);
               }
             } catch (UnknownHostException e) {
-              log.warn("Invalid nameserver address on adapter index {}", result.IfIndex, e);
+              Log.warn("[DNS] Invalid nameserver address on adapter index @", result.IfIndex, e);
             }
 
             dns = dns.Next;

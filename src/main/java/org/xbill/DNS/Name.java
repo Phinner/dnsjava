@@ -3,17 +3,16 @@
 
 package org.xbill.DNS;
 
+import arc.util.*;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * A representation of a domain name. It may either be absolute (fully qualified) or relative.
  *
  * @author Brian Wellington
  */
-@Slf4j
 public class Name implements Comparable<Name>, Serializable {
 
   private static final long serialVersionUID = -6036624806201621219L;
@@ -369,7 +368,7 @@ public class Name implements Comparable<Name>, Serializable {
         case LABEL_COMPRESSION:
           pos = in.readU8();
           pos += (len & ~LABEL_MASK) << 8;
-          log.trace("currently {}, pointer to {}", in.current(), pos);
+          Log.debug("[DNS] currently @, pointer to @", in.current(), pos);
 
           if (pos >= in.current() - 2) {
             throw new WireParseException("bad compression");
@@ -379,7 +378,7 @@ public class Name implements Comparable<Name>, Serializable {
             savedState = true;
           }
           in.jump(pos);
-          log.trace("current name '{}', seeking to {}", this, pos);
+          Log.debug("[DNS] current name '@', seeking to @", this, pos);
           break;
         default:
           throw new WireParseException("bad label type");

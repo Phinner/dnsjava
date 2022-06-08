@@ -3,6 +3,7 @@
 
 package org.xbill.DNS;
 
+import arc.util.*;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.net.InetAddress;
@@ -15,7 +16,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.xbill.DNS.hosts.HostsFileParser;
 
 /**
@@ -39,7 +39,6 @@ import org.xbill.DNS.hosts.HostsFileParser;
  * @see HostsFileParser
  * @author Brian Wellington
  */
-@Slf4j
 public final class Lookup {
 
   private static Resolver defaultResolver;
@@ -559,7 +558,7 @@ public final class Lookup {
     }
 
     SetResponse sr = cache.lookupRecords(current, type, credibility);
-    log.debug("Lookup for {}/{}, cache answer: {}", current, Type.string(type), sr);
+    Log.debug("[DNS] Lookup for @/@, cache answer: @", current, Type.string(type), sr);
 
     processResponse(current, sr);
     if (done || doneCurrent) {
@@ -572,8 +571,8 @@ public final class Lookup {
     try {
       response = resolver.send(query);
     } catch (IOException e) {
-      log.debug(
-          "Lookup for {}/{}, id={} failed using resolver {}",
+      Log.debug(
+          "[DNS] Lookup for @/@, id=@ failed using resolver @",
           current,
           Type.string(query.getQuestion().getType()),
           query.getHeader().getID(),
@@ -609,8 +608,8 @@ public final class Lookup {
       sr = cache.lookupRecords(current, type, credibility);
     }
 
-    log.debug(
-        "Queried {}/{}, id={}: {}", current, Type.string(type), response.getHeader().getID(), sr);
+    Log.debug(
+        "[DNS] Queried @/@, id=@: @", current, Type.string(type), response.getHeader().getID(), sr);
     processResponse(current, sr);
   }
 
@@ -630,7 +629,7 @@ public final class Lookup {
           return true;
         }
       } catch (IOException e) {
-        log.debug("Local hosts database parsing failed, ignoring and using resolver", e);
+        Log.debug("[DNS] Local hosts database parsing failed, ignoring and using resolver: @", e);
       }
     }
 

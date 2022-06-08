@@ -3,6 +3,7 @@
 
 package org.xbill.DNS;
 
+import arc.util.*;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
@@ -20,7 +21,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * An implementation of {@link Resolver} that can send queries to multiple servers, sending the
@@ -29,7 +29,6 @@ import lombok.extern.slf4j.Slf4j;
  * @see Resolver
  * @author Brian Wellington
  */
-@Slf4j
 public class ExtendedResolver implements Resolver {
   private static class Resolution {
     private final Message query;
@@ -68,8 +67,8 @@ public class ExtendedResolver implements Resolver {
     /* Asynchronously sends a message. */
     private CompletionStage<Message> send(Executor executorService) {
       ResolverEntry r = resolvers.get(currentResolver);
-      log.debug(
-          "Sending {}/{}, id={} to resolver {} ({}), attempt {} of {}",
+      Log.debug(
+          "[DNS] Sending @/@, id=@ to resolver @ (@), attempt @ of @",
           query.getQuestion().getName(),
           Type.string(query.getQuestion().getType()),
           query.getHeader().getID(),
@@ -92,8 +91,8 @@ public class ExtendedResolver implements Resolver {
         Message result, Throwable ex, Executor executorService) {
       AtomicInteger failureCounter = resolvers.get(currentResolver).failures;
       if (ex != null) {
-        log.debug(
-            "Failed to resolve {}/{}, id={} with resolver {} ({}) on attempt {} of {}, reason={}",
+        Log.debug(
+            "Failed to resolve @/@, id=@ with resolver @ (@) on attempt @ of @, reason=@",
             query.getQuestion().getName(),
             Type.string(query.getQuestion().getType()),
             query.getHeader().getID(),

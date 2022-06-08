@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 package org.xbill.DNS.config;
 
+import arc.util.*;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -54,7 +55,7 @@ public class PropertyResolverConfigProvider extends BaseResolverConfigProvider {
             addNameserver(new InetSocketAddress(uri.getHost(), port));
           }
         } catch (URISyntaxException e) {
-          log.warn("Ignored invalid server {}", server);
+          Log.warn("[DNS] Ignored invalid server @", server);
         }
       }
     }

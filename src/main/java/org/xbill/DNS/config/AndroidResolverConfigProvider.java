@@ -7,7 +7,6 @@ import android.net.LinkProperties;
 import android.net.Network;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import lombok.extern.slf4j.Slf4j;
 import org.xbill.DNS.ResolverConfig;
 import org.xbill.DNS.SimpleResolver;
 
@@ -20,7 +19,6 @@ import org.xbill.DNS.SimpleResolver;
  * Something you need to do anyway to call {@link ResolverConfig#refresh()} otherwise it is pretty
  * much guaranteed to have outdated servers sooner or later.
  */
-@Slf4j
 public class AndroidResolverConfigProvider extends BaseResolverConfigProvider {
   private static Context context = null;
 

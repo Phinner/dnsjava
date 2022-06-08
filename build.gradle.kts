@@ -10,12 +10,15 @@ plugins {
 repositories {
     mavenLocal()
     maven("https://repo.maven.apache.org/maven2/")
+    maven("https://jitpack.io")
 }
 
 dependencies {
-    implementation("org.slf4j:slf4j-api:1.7.36")
     implementation("net.java.dev.jna:jna:5.11.0")
     implementation("net.java.dev.jna:jna-platform:5.11.0")
+
+    compileOnly("org.robolectric:android-all:12.1-robolectric-8229987")
+    compileOnly("com.github.Anuken.Arc:arc-core:v135.2")
 
     testImplementation("org.bouncycastle:bcprov-jdk15on:1.70")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
@@ -24,9 +27,9 @@ dependencies {
     testImplementation("org.mockito:mockito-core:4.5.1")
     testImplementation("org.mockito:mockito-junit-jupiter:4.5.1")
     testImplementation("org.slf4j:slf4j-simple:1.7.36")
+    testImplementation("com.github.Anuken.Arc:arc-core:v135.2")
     testImplementation("io.vertx:vertx-core:4.3.0")
     testImplementation("io.vertx:vertx-junit5:4.3.0")
-    compileOnly("org.robolectric:android-all:12.1-robolectric-8229987")
 
     compileOnly("org.projectlombok:lombok:1.18.24")
     annotationProcessor("org.projectlombok:lombok:1.18.24")
@@ -45,6 +48,6 @@ publishing {
     }
 }
 
-tasks.withType<JavaCompile>() {
+tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
 }

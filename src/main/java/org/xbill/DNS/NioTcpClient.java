@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 package org.xbill.DNS;
 
+import arc.util.*;
 import java.io.EOFException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -19,9 +20,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @UtilityClass
 final class NioTcpClient extends NioClient {
   private static final Queue<ChannelState> registrationQueue = new ConcurrentLinkedQueue<>();
@@ -146,7 +145,7 @@ final class NioTcpClient extends NioClient {
           try {
             channel.close();
           } catch (IOException ex) {
-            log.error("failed to close channel", ex);
+            Log.err("[DNS] failed to close channel", ex);
           }
           return;
         }
@@ -252,7 +251,7 @@ final class NioTcpClient extends NioClient {
               new ChannelKey(local, remote),
               key -> {
                 try {
-                  log.trace("Opening async channel for l={}/r={}", local, remote);
+                  Log.debug("[DNS] Opening async channel for l=@/r=@", local, remote);
                   SocketChannel c = SocketChannel.open();
                   c.configureBlocking(false);
                   if (local != null) {
@@ -267,8 +266,8 @@ final class NioTcpClient extends NioClient {
                 }
               });
       if (channel != null) {
-        log.trace(
-            "Creating transaction for {}/{}",
+        Log.debug(
+            "[DNS] Creating transaction for @/@",
             query.getQuestion().getName(),
             Type.string(query.getQuestion().getType()));
         Transaction t = new Transaction(query, data, endTime, channel.channel, f);

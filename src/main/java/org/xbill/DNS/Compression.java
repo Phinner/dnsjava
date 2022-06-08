@@ -3,7 +3,7 @@
 
 package org.xbill.DNS;
 
-import lombok.extern.slf4j.Slf4j;
+import arc.util.*;
 
 /**
  * DNS Name Compression object.
@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
  * @see Name
  * @author Brian Wellington
  */
-@Slf4j
 public class Compression {
 
   private static class Entry {
@@ -46,7 +45,7 @@ public class Compression {
     entry.pos = pos;
     entry.next = table[row];
     table[row] = entry;
-    log.trace("Adding {} at {}", name, pos);
+    Log.debug("[DNS] Adding @ at @", name, pos);
   }
 
   /**
@@ -63,7 +62,7 @@ public class Compression {
         pos = entry.pos;
       }
     }
-    log.trace("Looking for {}, found {}", name, pos);
+    Log.debug("[DNS] Looking for @, found @", name, pos);
     return pos;
   }
 }

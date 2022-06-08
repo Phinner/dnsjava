@@ -3,14 +3,13 @@
 
 package org.xbill.DNS;
 
-import java.io.IOException;
+import arc.util.*;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * A cache of DNS records. The cache obeys TTLs, so items are purged after their validity period is
@@ -22,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
  * @see Credibility
  * @author Brian Wellington
  */
-@Slf4j
 public class Cache {
 
   private interface Element {
@@ -719,8 +717,8 @@ public class Cache {
       addRRset(rRset, cred);
     }
 
-    log.debug(
-        "Caching {} for {}/{}",
+    Log.debug(
+        "[DNS] Caching @ for @/@",
         response,
         in.getQuestion().getName(),
         Type.string(in.getQuestion().getType()));

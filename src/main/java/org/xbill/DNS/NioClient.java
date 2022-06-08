@@ -3,6 +3,7 @@
 
 package org.xbill.DNS;
 
+import arc.util.*;
 import java.io.IOException;
 import java.net.SocketAddress;
 import java.nio.channels.ClosedSelectorException;
@@ -13,7 +14,6 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.xbill.DNS.utils.hexdump;
 
 /**
@@ -24,7 +24,6 @@ import org.xbill.DNS.utils.hexdump;
  *
  * @since 3.4
  */
-@Slf4j
 @NoArgsConstructor(access = AccessLevel.NONE)
 public abstract class NioClient {
   /** Packet logger, if available. */
@@ -46,7 +45,7 @@ public abstract class NioClient {
       synchronized (NioClient.class) {
         if (selector == null) {
           selector = Selector.open();
-          log.debug("Starting dnsjava NIO selector thread");
+          Log.debug("[DNS] Starting dnsjava NIO selector thread");
           run = true;
           selectorThread = new Thread(NioClient::runSelector);
           selectorThread.setDaemon(true);
@@ -74,7 +73,7 @@ public abstract class NioClient {
       try {
         Runtime.getRuntime().removeShutdownHook(closeThread);
       } catch (Exception ex) {
-        log.warn("Failed to remove shutdown hoook, ignoring and continuing close");
+        Log.warn("[DNS] Failed to remove shutdown hoook, ignoring and continuing close");
       }
     }
 
@@ -82,7 +81,7 @@ public abstract class NioClient {
       try {
         closeTask.run();
       } catch (Exception e) {
-        log.warn("Failed to execute a shutdown task, ignoring and continuing close", e);
+        Log.warn("[DNS] Failed to execute a shutdown task, ignoring and continuing close: @", e);
       }
     }
 
@@ -91,7 +90,7 @@ public abstract class NioClient {
     try {
       selector.close();
     } catch (IOException e) {
-      log.warn("Failed to properly close selector, ignoring and continuing close", e);
+      Log.warn("[DNS] Failed to properly close selector, ignoring and continuing close: @", e);
     }
 
     try {
@@ -118,12 +117,12 @@ public abstract class NioClient {
           processReadyKeys();
         }
       } catch (IOException e) {
-        log.error("A selection operation failed", e);
+        Log.err("[DNS] A selection operation failed", e);
       } catch (ClosedSelectorException e) {
         // ignore
       }
     }
-    log.debug("dnsjava NIO selector thread stopped");
+    Log.debug("[DNS] dnsjava NIO selector thread stopped");
   }
 
   static void addSelectorTimeoutTask(Runnable r) {
@@ -145,9 +144,7 @@ public abstract class NioClient {
   }
 
   static void verboseLog(String prefix, SocketAddress local, SocketAddress remote, byte[] data) {
-    if (log.isTraceEnabled()) {
-      log.trace(hexdump.dump(prefix, data));
-    }
+    Log.debug("[DNS] " + hexdump.dump(prefix, data));
     if (packetLogger != null) {
       packetLogger.log(prefix, local, remote, data);
     }

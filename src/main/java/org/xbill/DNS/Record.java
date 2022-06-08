@@ -3,6 +3,7 @@
 
 package org.xbill.DNS;
 
+import arc.util.Log;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InvalidObjectException;
@@ -12,7 +13,6 @@ import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.function.Supplier;
-import lombok.extern.slf4j.Slf4j;
 import org.xbill.DNS.utils.base16;
 
 /**
@@ -21,7 +21,6 @@ import org.xbill.DNS.utils.base16;
  *
  * @author Brian Wellington
  */
-@Slf4j
 public abstract class Record implements Cloneable, Comparable<Record>, Serializable {
   protected Name name;
   protected int type;
@@ -70,7 +69,7 @@ public abstract class Record implements Cloneable, Comparable<Record>, Serializa
   }
 
   Object writeReplace() {
-    log.trace("Creating proxy object for serialization");
+    Log.debug("[DNS] Creating proxy object for serialization");
     return new RecordSerializationProxy(this);
   }
 

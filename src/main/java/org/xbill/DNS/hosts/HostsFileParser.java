@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 package org.xbill.DNS.hosts;
 
+import arc.util.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -15,7 +16,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.xbill.DNS.Address;
 import org.xbill.DNS.Name;
 import org.xbill.DNS.TextParseException;
@@ -27,7 +27,6 @@ import org.xbill.DNS.Type;
  *
  * @since 3.4
  */
-@Slf4j
 public final class HostsFileParser {
   private static final int MAX_FULL_CACHE_FILE_SIZE_BYTES = 16384;
 
@@ -173,7 +172,7 @@ public final class HostsFileParser {
     }
 
     if (lineAddressBytes == null) {
-      log.warn("Could not decode address {}, {}#L{}", lineTokens[0], path, lineNumber);
+      Log.warn("[DNS] Could not decode address @, @#L@", lineTokens[0], path, lineNumber);
       return null;
     }
 
@@ -190,7 +189,7 @@ public final class HostsFileParser {
     try {
       return Name.fromString(name, Name.root);
     } catch (TextParseException e) {
-      log.warn("Could not decode name {}, {}#L{}, skipping", name, path, lineNumber);
+      Log.warn("[DNS] Could not decode name , @#L@, skipping", name, path, lineNumber);
       return null;
     }
   }
@@ -214,7 +213,7 @@ public final class HostsFileParser {
       if (fileTime.isAfter(lastFileReadTime)) {
         // skip logging noise when the cache is empty anyway
         if (!hostsCache.isEmpty()) {
-          log.info("Local hosts database has changed at {}, clearing cache", fileTime);
+          Log.info("[DNS] Local hosts database has changed at @, clearing cache", fileTime);
           hostsCache.clear();
         }
 

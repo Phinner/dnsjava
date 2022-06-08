@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 package org.xbill.DNS.lookup;
 
+import arc.util.*;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -19,7 +20,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.xbill.DNS.AAAARecord;
 import org.xbill.DNS.ARecord;
 import org.xbill.DNS.CNAMERecord;
@@ -48,7 +48,6 @@ import org.xbill.DNS.hosts.HostsFileParser;
  * lived, and it's behaviour can be configured using the properties of the {@link
  * LookupSessionBuilder} instance returned by {@link #builder()}.
  */
-@Slf4j
 public class LookupSession {
   public static final int DEFAULT_MAX_ITERATIONS = 16;
   public static final int DEFAULT_NDOTS = 1;
@@ -434,7 +433,7 @@ public class LookupSession {
           }
         }
       } catch (IOException e) {
-        log.debug("Local hosts database parsing failed, ignoring and using resolver", e);
+        Log.debug("[DNS] Local hosts database parsing failed, ignoring and using resolver: @", e);
       }
     }
 

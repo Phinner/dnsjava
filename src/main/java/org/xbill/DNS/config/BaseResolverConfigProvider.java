@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 package org.xbill.DNS.config;
 
+import arc.util.*;
 import java.net.Inet4Address;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -8,8 +9,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xbill.DNS.Name;
 import org.xbill.DNS.TextParseException;
 
@@ -25,7 +24,6 @@ public abstract class BaseResolverConfigProvider implements ResolverConfigProvid
 
   private final List<InetSocketAddress> nameservers = new ArrayList<>(3);
 
-  protected final Logger log = LoggerFactory.getLogger(getClass());
   protected final List<Name> searchlist = new ArrayList<>(1);
 
   protected final void reset() {
@@ -52,17 +50,17 @@ public abstract class BaseResolverConfigProvider implements ResolverConfigProvid
       Name n = Name.fromString(searchPath, Name.root);
       if (!searchlist.contains(n)) {
         searchlist.add(n);
-        log.debug("Added {} to search paths", n);
+        Log.debug("[DNS] Added @ to search paths", n);
       }
     } catch (TextParseException e) {
-      log.warn("Could not parse search path {} as a dns name, ignoring", searchPath);
+      Log.warn("[DNS] Could not parse search path @ as a dns name, ignoring", searchPath);
     }
   }
 
   protected void addNameserver(InetSocketAddress server) {
     if (!nameservers.contains(server)) {
       nameservers.add(server);
-      log.debug("Added {} to nameservers", server);
+      Log.debug("[DNS] Added @ to nameservers", server);
     }
   }
 

@@ -3,12 +3,12 @@
 
 package org.xbill.DNS;
 
+import arc.util.*;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import lombok.extern.slf4j.Slf4j;
 import org.xbill.DNS.config.AndroidResolverConfigProvider;
 import org.xbill.DNS.config.FallbackPropertyResolverConfigProvider;
 import org.xbill.DNS.config.InitializationException;
@@ -42,7 +42,6 @@ import org.xbill.DNS.config.WindowsResolverConfigProvider;
  * These routines will be called internally when creating Resolvers/Lookups without explicitly
  * specifying server names, and can also be called directly if desired.
  */
-@Slf4j
 public final class ResolverConfig {
   /** @since 3.2 */
   public static final String CONFIGPROVIDER_SKIP_INIT = "dnsjava.configprovider.skipinit";
@@ -126,7 +125,7 @@ public final class ResolverConfig {
             return;
           }
         } catch (InitializationException e) {
-          log.warn("Failed to initialize provider", e);
+          Log.warn("[DNS] Failed to initialize provider: @", e);
         }
       }
     }

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 package org.xbill.DNS.config;
 
+import arc.util.*;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -11,7 +12,6 @@ import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
-import lombok.extern.slf4j.Slf4j;
 import org.xbill.DNS.Name;
 import org.xbill.DNS.SimpleResolver;
 
@@ -20,7 +20,7 @@ import org.xbill.DNS.SimpleResolver;
  * href="https://docs.oracle.com/javase/8/docs/technotes/guides/jndi/jndi-dns.html">JNDI DNS Service
  * Provider</a>.
  */
-@Slf4j
+
 public class JndiContextResolverConfigProvider implements ResolverConfigProvider {
   private InnerJndiContextResolverConfigProvider inner;
 
@@ -29,16 +29,16 @@ public class JndiContextResolverConfigProvider implements ResolverConfigProvider
       try {
         inner = new InnerJndiContextResolverConfigProvider();
       } catch (NoClassDefFoundError e) {
-        log.debug("JNDI DNS not available");
+        Log.debug("[DNS] JNDI DNS not available");
       }
     }
   }
 
-  @Slf4j
+  
   private static final class InnerJndiContextResolverConfigProvider
       extends BaseResolverConfigProvider {
     static {
-      log.debug("JNDI class: {}", DirContext.class.getName());
+      Log.debug("[DNS] JNDI class: @", DirContext.class.getName());
     }
 
     @Override
@@ -77,7 +77,7 @@ public class JndiContextResolverConfigProvider implements ResolverConfigProvider
 
             addNameserver(new InetSocketAddress(host, port));
           } catch (URISyntaxException e) {
-            log.debug("Could not parse {} as a dns server, ignoring", server, e);
+            Log.debug("[DNS] Could not parse @ as a dns server, ignoring: @", server, e);
           }
         }
       }

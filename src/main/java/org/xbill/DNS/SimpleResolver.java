@@ -3,6 +3,7 @@
 
 package org.xbill.DNS;
 
+import arc.util.*;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -14,7 +15,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * An implementation of Resolver that sends one query to one server. SimpleResolver handles TCP
@@ -25,7 +25,6 @@ import lombok.extern.slf4j.Slf4j;
  * @see OPTRecord
  * @author Brian Wellington
  */
-@Slf4j
 public class SimpleResolver implements Resolver {
 
   /** The default port to send queries to */
@@ -273,8 +272,8 @@ public class SimpleResolver implements Resolver {
       return;
     }
     int error = tsig.verify(response, b, query.getGeneratedTSIG());
-    log.debug(
-        "TSIG verify on message id {}: {}", query.getHeader().getID(), Rcode.TSIGstring(error));
+    Log.debug(
+        "[DNS] TSIG verify on message id {}: {}", query.getHeader().getID(), Rcode.TSIGstring(error));
   }
 
   private void applyEDNS(Message query) {
@@ -345,26 +344,23 @@ public class SimpleResolver implements Resolver {
     byte[] out = query.toWire(Message.MAXLENGTH);
     int udpSize = maxUDPSize(query);
     boolean tcp = forceTcp || out.length > udpSize;
-    if (log.isTraceEnabled()) {
-      log.trace(
-          "Sending {}/{}, id={} to {}/{}:{}, query:\n{}",
-          query.getQuestion().getName(),
-          Type.string(query.getQuestion().getType()),
-          qid,
-          tcp ? "tcp" : "udp",
-          address.getAddress().getHostAddress(),
-          address.getPort(),
-          query);
-    } else if (log.isDebugEnabled()) {
-      log.debug(
-          "Sending {}/{}, id={} to {}/{}:{}",
-          query.getQuestion().getName(),
-          Type.string(query.getQuestion().getType()),
-          qid,
-          tcp ? "tcp" : "udp",
-          address.getAddress().getHostAddress(),
-          address.getPort());
-    }
+    Log.debug(
+        "[DNS] Sending @/@, id=@ to @/@:@, query:\n@",
+        query.getQuestion().getName(),
+        Type.string(query.getQuestion().getType()),
+        qid,
+        tcp ? "tcp" : "udp",
+        address.getAddress().getHostAddress(),
+        address.getPort(),
+        query);
+    Log.debug(
+        "[DNS] Sending @/@, id=@ to @/@:@",
+        query.getQuestion().getName(),
+        Type.string(query.getQuestion().getType()),
+        qid,
+        tcp ? "tcp" : "udp",
+        address.getAddress().getHostAddress(),
+        address.getPort());
 
     CompletableFuture<byte[]> result;
     if (tcp) {
@@ -435,14 +431,11 @@ public class SimpleResolver implements Resolver {
 
           verifyTSIG(query, response, in);
           if (!tcp && !ignoreTruncation && response.getHeader().getFlag(Flags.TC)) {
-            if (log.isTraceEnabled()) {
-              log.trace(
-                  "Got truncated response for id {}, retrying via TCP, response:\n{}",
-                  qid,
-                  response);
-            } else {
-              log.debug("Got truncated response for id {}, retrying via TCP", qid);
-            }
+            Log.debug(
+                "[DNS] Got truncated response for id @, retrying via TCP, response:\n@",
+                qid,
+                response);
+            Log.debug("[DNS] Got truncated response for id @, retrying via TCP", qid);
             return sendAsync(query, true, executor);
           }
 

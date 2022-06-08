@@ -3,6 +3,7 @@
 
 package org.xbill.DNS;
 
+import arc.util.*;
 import java.security.GeneralSecurityException;
 import java.time.Clock;
 import java.time.Duration;
@@ -15,7 +16,6 @@ import java.util.Objects;
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import lombok.extern.slf4j.Slf4j;
 import org.xbill.DNS.utils.base64;
 import org.xbill.DNS.utils.hexdump;
 
@@ -26,7 +26,6 @@ import org.xbill.DNS.utils.hexdump;
  * @see TSIGRecord
  * @author Brian Wellington
  */
-@Slf4j
 public class TSIG {
   // https://www.iana.org/assignments/tsig-algorithm-names/tsig-algorithm-names.xml
 
@@ -397,9 +396,7 @@ public class TSIG {
 
     // Digest the message
     if (signing) {
-      if (log.isTraceEnabled()) {
-        log.trace(hexdump.dump("TSIG-HMAC rendered message", b));
-      }
+      Log.debug("[DNS] " + hexdump.dump("TSIG-HMAC rendered message", b));
       hmac.update(b);
     }
 
@@ -422,9 +419,7 @@ public class TSIG {
     byte[] signature;
     if (signing) {
       byte[] tsigVariables = out.toByteArray();
-      if (log.isTraceEnabled()) {
-        log.trace(hexdump.dump("TSIG-HMAC variables", tsigVariables));
-      }
+      Log.debug("[DNS] " + hexdump.dump("TSIG-HMAC variables", tsigVariables));
       signature = hmac.doFinal(tsigVariables);
     } else {
       signature = new byte[0];
@@ -579,8 +574,7 @@ public class TSIG {
     }
 
     if (!tsig.getName().equals(name) || !tsig.getAlgorithm().equals(alg)) {
-      log.debug(
-          "BADKEY failure on message id {}, expected: {}/{}, actual: {}/{}",
+      Log.debug("[DNS] BADKEY failure on message id @, expected: @/@, actual: @/@",
           m.getHeader().getID(),
           name,
           alg,
@@ -597,15 +591,11 @@ public class TSIG {
     m.getHeader().decCount(Section.ADDITIONAL);
     byte[] header = m.getHeader().toWire();
     m.getHeader().incCount(Section.ADDITIONAL);
-    if (log.isTraceEnabled()) {
-      log.trace(hexdump.dump("TSIG-HMAC header", header));
-    }
+    Log.debug("[DNS] " + hexdump.dump("TSIG-HMAC header", header));
     hmac.update(header);
 
     int len = m.tsigstart - header.length;
-    if (log.isTraceEnabled()) {
-      log.trace(hexdump.dump("TSIG-HMAC message after header", messageBytes, header.length, len));
-    }
+    Log.debug("[DNS] " + hexdump.dump("TSIG-HMAC message after header", messageBytes, header.length, len));
     hmac.update(messageBytes, header.length, len);
 
     DNSOutput out = new DNSOutput();
@@ -627,9 +617,7 @@ public class TSIG {
     }
 
     byte[] tsigVariables = out.toByteArray();
-    if (log.isTraceEnabled()) {
-      log.trace(hexdump.dump("TSIG-HMAC variables", tsigVariables));
-    }
+    Log.debug("[DNS] " + hexdump.dump("TSIG-HMAC variables", tsigVariables));
     hmac.update(tsigVariables);
 
     byte[] signature = tsig.getSignature();
@@ -640,12 +628,10 @@ public class TSIG {
     // the length of the hash function in use
     int minDigestLength = Math.max(10, digestLength / 2);
     if (signature.length > digestLength) {
-      log.debug(
-          "BADSIG: signature too long, expected: {}, actual: {}", digestLength, signature.length);
+      Log.debug("[DNS] BADSIG: signature too long, expected: @, actual: @", digestLength, signature.length);
       return Rcode.BADSIG;
     } else if (signature.length < minDigestLength) {
-      log.debug(
-          "BADSIG: signature too short, expected: {} of {}, actual: {}",
+      Log.debug("[DNS] BADSIG: signature too short, expected: @ of @, actual: @",
           minDigestLength,
           digestLength,
           signature.length);
@@ -653,12 +639,9 @@ public class TSIG {
     } else {
       byte[] expectedSignature = hmac.doFinal();
       if (!verify(expectedSignature, signature)) {
-        if (log.isDebugEnabled()) {
-          log.debug(
-              "BADSIG: signature verification failed, expected: {}, actual: {}",
-              base64.toString(expectedSignature),
-              base64.toString(signature));
-        }
+        Log.debug("[DNS] BADSIG: signature verification failed, expected: @, actual: @",
+            base64.toString(expectedSignature),
+            base64.toString(signature));
         return Rcode.BADSIG;
       }
     }
@@ -668,8 +651,8 @@ public class TSIG {
     Instant now = clock.instant();
     Duration delta = Duration.between(now, tsig.getTimeSigned()).abs();
     if (delta.compareTo(tsig.getFudge()) > 0) {
-      log.debug(
-          "BADTIME failure, now {} +/- tsig {} > fudge {}",
+      Log.debug(
+          "[DNS] BADTIME failure, now @ +/- tsig @ > fudge @",
           now,
           tsig.getTimeSigned(),
           tsig.getFudge());
@@ -697,10 +680,8 @@ public class TSIG {
 
   private static void hmacAddSignature(Mac hmac, TSIGRecord tsig) {
     byte[] signatureSize = DNSOutput.toU16(tsig.getSignature().length);
-    if (log.isTraceEnabled()) {
-      log.trace(hexdump.dump("TSIG-HMAC signature size", signatureSize));
-      log.trace(hexdump.dump("TSIG-HMAC signature", tsig.getSignature()));
-    }
+    Log.debug("[DNS] " + hexdump.dump("TSIG-HMAC signature size", signatureSize));
+    Log.debug("[DNS] " + hexdump.dump("TSIG-HMAC signature", tsig.getSignature()));
 
     hmac.update(signatureSize);
     hmac.update(tsig.getSignature());
@@ -762,11 +743,11 @@ public class TSIG {
       } else {
         boolean required = nresponses - lastsigned >= 100;
         if (required) {
-          log.debug("FORMERR: missing required signature on {}th message", nresponses);
+          Log.debug("[DNS] FORMERR: missing required signature on @th message", nresponses);
           m.tsigState = Message.TSIG_FAILED;
           return Rcode.FORMERR;
         } else {
-          log.trace("Intermediate message {} without signature", nresponses);
+          Log.debug("[DNS] Intermediate message @ without signature", nresponses);
           m.tsigState = Message.TSIG_INTERMEDIATE;
           return Rcode.NOERROR;
         }
