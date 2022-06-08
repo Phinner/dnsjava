@@ -396,7 +396,7 @@ public class TSIG {
 
     // Digest the message
     if (signing) {
-      Log.debug("[DNS] " + hexdump.dump("TSIG-HMAC rendered message", b));
+      // Log.debug("[DNS] " + hexdump.dump("TSIG-HMAC rendered message", b));
       hmac.update(b);
     }
 
@@ -419,7 +419,7 @@ public class TSIG {
     byte[] signature;
     if (signing) {
       byte[] tsigVariables = out.toByteArray();
-      Log.debug("[DNS] " + hexdump.dump("TSIG-HMAC variables", tsigVariables));
+      // Log.debug("[DNS] " + hexdump.dump("TSIG-HMAC variables", tsigVariables));
       signature = hmac.doFinal(tsigVariables);
     } else {
       signature = new byte[0];
@@ -591,11 +591,11 @@ public class TSIG {
     m.getHeader().decCount(Section.ADDITIONAL);
     byte[] header = m.getHeader().toWire();
     m.getHeader().incCount(Section.ADDITIONAL);
-    Log.debug("[DNS] " + hexdump.dump("TSIG-HMAC header", header));
+    // Log.debug("[DNS] " + hexdump.dump("TSIG-HMAC header", header));
     hmac.update(header);
 
     int len = m.tsigstart - header.length;
-    Log.debug("[DNS] " + hexdump.dump("TSIG-HMAC message after header", messageBytes, header.length, len));
+    // Log.debug("[DNS] " + hexdump.dump("TSIG-HMAC message after header", messageBytes, header.length, len));
     hmac.update(messageBytes, header.length, len);
 
     DNSOutput out = new DNSOutput();
@@ -617,7 +617,7 @@ public class TSIG {
     }
 
     byte[] tsigVariables = out.toByteArray();
-    Log.debug("[DNS] " + hexdump.dump("TSIG-HMAC variables", tsigVariables));
+    // Log.debug("[DNS] " + hexdump.dump("TSIG-HMAC variables", tsigVariables));
     hmac.update(tsigVariables);
 
     byte[] signature = tsig.getSignature();
@@ -680,8 +680,8 @@ public class TSIG {
 
   private static void hmacAddSignature(Mac hmac, TSIGRecord tsig) {
     byte[] signatureSize = DNSOutput.toU16(tsig.getSignature().length);
-    Log.debug("[DNS] " + hexdump.dump("TSIG-HMAC signature size", signatureSize));
-    Log.debug("[DNS] " + hexdump.dump("TSIG-HMAC signature", tsig.getSignature()));
+    // Log.debug("[DNS] " + hexdump.dump("TSIG-HMAC signature size", signatureSize));
+    // Log.debug("[DNS] " + hexdump.dump("TSIG-HMAC signature", tsig.getSignature()));
 
     hmac.update(signatureSize);
     hmac.update(tsig.getSignature());

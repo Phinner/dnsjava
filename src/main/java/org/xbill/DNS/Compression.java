@@ -45,7 +45,7 @@ public class Compression {
     entry.pos = pos;
     entry.next = table[row];
     table[row] = entry;
-    Log.debug("[DNS] Adding @ at @", name, pos);
+    // Log.debug("[DNS] Adding @ at @", name, pos);
   }
 
   /**
@@ -62,7 +62,7 @@ public class Compression {
         pos = entry.pos;
       }
     }
-    Log.debug("[DNS] Looking for @, found @", name, pos);
+    // Log.debug("[DNS] Looking for @, found @", name, pos);
     return pos;
   }
 }

@@ -273,7 +273,7 @@ public class SimpleResolver implements Resolver {
     }
     int error = tsig.verify(response, b, query.getGeneratedTSIG());
     Log.debug(
-        "[DNS] TSIG verify on message id {}: {}", query.getHeader().getID(), Rcode.TSIGstring(error));
+        "[DNS] TSIG verify on message id @: @", query.getHeader().getID(), Rcode.TSIGstring(error));
   }
 
   private void applyEDNS(Message query) {
@@ -344,6 +344,7 @@ public class SimpleResolver implements Resolver {
     byte[] out = query.toWire(Message.MAXLENGTH);
     int udpSize = maxUDPSize(query);
     boolean tcp = forceTcp || out.length > udpSize;
+    /*
     Log.debug(
         "[DNS] Sending @/@, id=@ to @/@:@, query:\n@",
         query.getQuestion().getName(),
@@ -353,6 +354,7 @@ public class SimpleResolver implements Resolver {
         address.getAddress().getHostAddress(),
         address.getPort(),
         query);
+     */
     Log.debug(
         "[DNS] Sending @/@, id=@ to @/@:@",
         query.getQuestion().getName(),

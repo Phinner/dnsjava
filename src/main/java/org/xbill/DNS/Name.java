@@ -368,7 +368,7 @@ public class Name implements Comparable<Name>, Serializable {
         case LABEL_COMPRESSION:
           pos = in.readU8();
           pos += (len & ~LABEL_MASK) << 8;
-          Log.debug("[DNS] currently @, pointer to @", in.current(), pos);
+          // Log.debug("[DNS] currently @, pointer to @", in.current(), pos);
 
           if (pos >= in.current() - 2) {
             throw new WireParseException("bad compression");
@@ -378,7 +378,7 @@ public class Name implements Comparable<Name>, Serializable {
             savedState = true;
           }
           in.jump(pos);
-          Log.debug("[DNS] current name '@', seeking to @", this, pos);
+          // Log.debug("[DNS] current name '@', seeking to @", this, pos);
           break;
         default:
           throw new WireParseException("bad label type");

@@ -144,7 +144,7 @@ public abstract class NioClient {
   }
 
   static void verboseLog(String prefix, SocketAddress local, SocketAddress remote, byte[] data) {
-    Log.debug("[DNS] " + hexdump.dump(prefix, data));
+    // Log.debug("[DNS] " + hexdump.dump(prefix, data));
     if (packetLogger != null) {
       packetLogger.log(prefix, local, remote, data);
     }
